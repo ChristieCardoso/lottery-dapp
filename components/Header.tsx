@@ -2,13 +2,14 @@
 
 import React from "react";
 import { NavButton } from "../components/NabButton";
-import { Bars3BottomRightIcon } from "@heroicons/react/24/solid";
+// import { Bars3BottomRightIcon } from "@heroicons/react/24/solid";
 import { useAddress, useDisconnect } from "@thirdweb-dev/react";
+import BtnWalletConnect from "./BtnWalletConnect";
 
 export const Header = () => {
   const address = useAddress();
   const disconnect = useDisconnect();
-  
+
   return (
     <header className="grid grid-cols-2 md:grid-cols-5 justify-between items-center p-5">
       <div className="flex items-center space-x-2">
@@ -19,7 +20,10 @@ export const Header = () => {
         />
         <div>
           <h1 className="text-lg text-white font-bold">BlockFolio</h1>
-          <p className="text-xs text-emerald-500 truncate">User: {address?.substring(0,5)}...{address?.substring(address.length, address.length - 5)}</p>
+          <p className="text-xs text-emerald-500 truncate">
+            User: {address?.substring(0, 5)}...
+            {address?.substring(address.length, address.length - 5)}
+          </p>
         </div>
       </div>
 
@@ -31,7 +35,8 @@ export const Header = () => {
       </div>
 
       <div className="flex flex-col ml-auto text-right">
-        <Bars3BottomRightIcon className="h-8 w-8 mx-auto text-white cursor-pointer" />
+        {/* <Bars3BottomRightIcon className="h-8 w-8 mx-auto text-white cursor-pointer" /> */}
+        <BtnWalletConnect />
         <span className="md:hidden">
           <NavButton onClick={disconnect} title="Logout" />
         </span>
