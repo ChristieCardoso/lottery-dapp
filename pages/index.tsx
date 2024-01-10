@@ -24,6 +24,9 @@ const Home: NextPage = () => {
     contract,
     "CurrentWinningReward"
   );
+
+  const { data: ticketPrice } = useContractRead(contract, "ticketPrice");
+
   console.log(currentWinningReward, "oi");
 
   if (!address) return <Login />;
@@ -70,7 +73,11 @@ const Home: NextPage = () => {
             <div className="stats-container">
               <div className="flex justify-between items-center text-white pb-2">
                 <h2 className="">Price per Ticket</h2>
-                <p>0.01 MATIC</p>
+                <p>
+                  {ticketPrice &&
+                    ethers.utils.formatEther(ticketPrice.toString())}
+                  {""} {currency}
+                </p>
               </div>
 
               <div className="flex text-white items-center space-x-2 bg-[#091B18] border-[#004337] border p-4">
