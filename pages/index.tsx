@@ -15,6 +15,7 @@ import { Header } from "../components/Header";
 import Login from "../components/Login";
 import Loading from "../components/Loading";
 import CountdownTimer from "../components/CountdownTimer";
+import AdminControls from "../components/AdminControls";
 
 
 const Home: NextPage = () => {
@@ -27,9 +28,11 @@ const Home: NextPage = () => {
   const { data: expiration } = useContractRead(contract, "expiration");
   const { data: winnings } = useContractRead(contract, "getWinningsForAddress", [address]);
   const { mutateAsync: WithdrawWinnings } = useContractWrite(contract, "WithdrawWinnings");
-
   const { data: lastWinner } = useContractRead(contract, "lastWinner");
   const { data: lastWinnerAmount } = useContractRead(contract, "lastWinnerAmount");
+
+
+  const { data: lotteryOperator } = useContractRead(contract, "lotteryOperator");
 
   const { data: remainingTickets } = useContractRead(contract, "RemainingTickets");
   const { data: currentWinningReward } = useContractRead(contract, "CurrentWinningReward");
@@ -120,6 +123,12 @@ const Home: NextPage = () => {
             <h4 className="text-white font-bold">Previous Winnings:{" "} {lastWinnerAmount && ethers.utils.formatEther(lastWinnerAmount?.toString())}{" "}{currency}</h4>
           </div>
         </Marquee>
+
+        {lotteryOperator == address && (
+          <div className="flex justify-center">
+            <AdminControls />
+          </div>
+        )}
 
         {winnings > 0 && (
           <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto mt-5">
