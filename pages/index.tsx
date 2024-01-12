@@ -28,6 +28,8 @@ const Home: NextPage = () => {
   const { data: winnings } = useContractRead(contract, "getWinningsForAddress", [address]);
   const { mutateAsync: WithdrawWinnings } = useContractWrite(contract, "WithdrawWinnings");
 
+  const { data: lastWinner } = useContractRead(contract, "lastWinner");
+  const { data: lastWinnerAmount } = useContractRead(contract, "lastWinnerAmount");
 
   const { data: remainingTickets } = useContractRead(contract, "RemainingTickets");
   const { data: currentWinningReward } = useContractRead(contract, "CurrentWinningReward");
@@ -113,8 +115,10 @@ const Home: NextPage = () => {
         <Header />
 
         <Marquee className="bg-[#0A1F1C] px-5 mb-5" gradient={false} speed={100} >
-          <h4>Last Winner: ...</h4>
-          <h4>Previous Winnings: ..</h4>
+          <div className="flex space-x-5 mx-10">
+            <h4 className="text-white font-bold">Last Winner: {lastWinner?.toString()}</h4>
+            <h4 className="text-white font-bold">Previous Winnings:{" "} {lastWinnerAmount && ethers.utils.formatEther(lastWinnerAmount?.toString())}{" "}{currency}</h4>
+          </div>
         </Marquee>
 
         {winnings > 0 && (
