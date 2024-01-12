@@ -23,8 +23,11 @@ const Home: NextPage = () => {
   const [userTickets, setUserTickets] = useState(0);
   const { data: tickets } = useContractRead(contract, "getTickets");
   const { data: ticketPrice } = useContractRead(contract, "ticketPrice");
-
   const { data: expiration } = useContractRead(contract, "expiration");
+
+  const { data: winnings } = useContractRead(contract, "getWinningsForAddress", [address]);
+  const { mutateAsync: WithdrawWinnings } = useContractWrite(contract, "WithdrawWinnings");
+
 
   const { data: remainingTickets } = useContractRead(contract, "RemainingTickets");
   const { data: currentWinningReward } = useContractRead(contract, "CurrentWinningReward");
@@ -35,12 +38,12 @@ const Home: NextPage = () => {
     const totalTickets: string[] = tickets;
     const numofTickets = totalTickets.reduce(
       (total, ticketAddress) =>
-        ticketAddress === address ? total + 1 : total,
+       (ticketAddress === address ? total + 1 : total),
       0
     );
-
     setUserTickets(numofTickets);
   }, [tickets, address]);
+
 
   const handleClick = async () => {
     if (!ticketPrice) return;
@@ -80,7 +83,23 @@ const Home: NextPage = () => {
       console.error("contract call failure", err);
     }
   };
-  
+
+  const onWithdrawWinnings = async () => {
+    const notification = toast.loading("Withdrawing winnings ...");
+
+    try {
+      const data = await WithdrawWinnings({ args: [] });
+
+      toast.success("Winnings withdrawn successfully!", {
+        id: notification,
+      });
+    } catch (err) {
+      toast.error("Whoops Something went wrong!", {
+        id: notification,
+      });
+    }
+  };
+
   if (!address) return <Login />;
   if (isLoading) return <Loading />;
 
@@ -92,6 +111,23 @@ const Home: NextPage = () => {
 
       <div className="flex-1">
         <Header />
+
+        {winnings > 0 && (
+          <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto mt-5">
+            <button
+              onClick={onWithdrawWinnings}
+              className="p-5 bg-gradient-to-b from-orange-600 to bg-emerald-700 animate-bounce text-center rounded-xl w-full text-black"
+            >
+              <p className="font-bold">Congratulations You Won The Lottery</p>
+              <p>
+                Total Winnings: {ethers.utils.formatEther(winnings.toString())}{" "}
+                {currency}
+              </p>
+              <br />
+              <p className="font-semibold">Click here to withdraw</p>
+            </button>
+          </div>
+        )}
 
         {/* The Next Draw Box*/}
         <div className="space-y-5 md:space-y-0 m-5 md:flex md:flex-row items-start justify-center md:space-x-5">
@@ -173,15 +209,45 @@ const Home: NextPage = () => {
               </div>
               
               <button
+                disabled={
+                  expiration?.toString() < Date.now().toString() ||
+                  remainingTickets?.toString() === 0
+                }
                 className="mt-5 w-full bg-gradient-to-br font-semibold from-orange-500 to bg-emerald-600
               py-5 rounded-md text-white shadow-xl disabled:from-gray-600 disabled:text-gray-100 disabled:to-gray-100
               "
                 onClick={handleClick}
               >
-                Buy Tickets
-              </button>
-           
+                Buy {quantity} tickets for {" "}
+                {ticketPrice && 
+                  Number(ethers.utils.formatEther(ticketPrice.toString
+                  ())) *
+                    quantity}{" "}
+                {currency}
+              </button>           
             </div>
+            {userTickets > 0 && (
+              <div className="stats">
+                <p className="text-lg mb-3">
+                  You have {userTickets} Tickets in this Lottery{" "}
+                </p>
+
+                <div className="flex max-w-sm  gap-x-5 gap-y-2">
+                  {Array(userTickets)
+                    .fill("")
+                    .map((_, index) => (
+                      <p
+                        key={index}
+                        className="text-emerald-300 h-20 w-12 bg-emerald-500/30 
+                    rounded-lg flex flex-shrink-0 items-center justify-center text-xl italic"
+                      >
+                        {" "}
+                        {index + 1}{" "}
+                      </p>
+                    ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
