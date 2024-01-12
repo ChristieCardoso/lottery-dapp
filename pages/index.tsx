@@ -7,6 +7,7 @@ import {
   useContractWrite,
 } from "@thirdweb-dev/react";
 import toast from "react-hot-toast";
+import Marquee from "react-fast-marquee";
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import { currency } from "../constants";
@@ -24,7 +25,6 @@ const Home: NextPage = () => {
   const { data: tickets } = useContractRead(contract, "getTickets");
   const { data: ticketPrice } = useContractRead(contract, "ticketPrice");
   const { data: expiration } = useContractRead(contract, "expiration");
-
   const { data: winnings } = useContractRead(contract, "getWinningsForAddress", [address]);
   const { mutateAsync: WithdrawWinnings } = useContractWrite(contract, "WithdrawWinnings");
 
@@ -111,6 +111,11 @@ const Home: NextPage = () => {
 
       <div className="flex-1">
         <Header />
+
+        <Marquee className="bg-[#0A1F1C] px-5 mb-5" gradient={false} speed={100} >
+          <h4>Last Winner: ...</h4>
+          <h4>Previous Winnings: ..</h4>
+        </Marquee>
 
         {winnings > 0 && (
           <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto mt-5">
@@ -228,11 +233,11 @@ const Home: NextPage = () => {
             </div>
             {userTickets > 0 && (
               <div className="stats">
-                <p className="text-lg mb-3">
+                <p className="text-lg mb-3 flex justify-center">
                   You have {userTickets} Tickets in this Lottery{" "}
                 </p>
 
-                <div className="flex max-w-sm  gap-x-5 gap-y-2">
+                <div className="flex max-w-sm  gap-x-5 gap-y-2 flex-wrap justify-center">
                   {Array(userTickets)
                     .fill("")
                     .map((_, index) => (
