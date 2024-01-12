@@ -1,42 +1,86 @@
 import { NextPage } from "next";
-import { Header } from "../components/Header";
 import Head from "next/head";
-import { useAddress, useContract, useContractRead } from "@thirdweb-dev/react";
-import Login from "../components/Login";
-import Loading from "../components/Loading";
-import { useState } from "react";
+import {
+  useAddress,
+  useContract,
+  useContractRead,
+  useContractWrite,
+} from "@thirdweb-dev/react";
+import toast from "react-hot-toast";
+import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import { currency } from "../constants";
+import { Header } from "../components/Header";
+import Login from "../components/Login";
+import Loading from "../components/Loading";
 import CountdownTimer from "../components/CountdownTimer";
 
+
 const Home: NextPage = () => {
+  const { contract, isLoading } = useContract("0x4c96dc3F2fDFC011941fF043EbE41bC1493e8086");
   const address = useAddress();
-  const [quantity, setQuantity] = useState<number>(1);
-  const { contract, isLoading } = useContract(
-    process.env.NEXT_PUBLIC_LOTTEY_CONTRACT_ADDRESS
-  );
+  const [quantity, setQuantity] = useState<number>(1);  
+  const [userTickets, setUserTickets] = useState(0);
+  const { data: tickets } = useContractRead(contract, "getTickets");
+  const { data: ticketPrice } = useContractRead(contract, "ticketPrice");
 
   const { data: expiration } = useContractRead(contract, "expiration");
 
-  const { data: remainingTickets } = useContractRead(
-    contract,
-    "RemainingTickets"
-  );
+  const { data: remainingTickets } = useContractRead(contract, "RemainingTickets");
+  const { data: currentWinningReward } = useContractRead(contract, "CurrentWinningReward");
+  const { data: ticketCommission } = useContractRead(contract, "ticketCommission");
 
-  const { data: currentWinningReward } = useContractRead(
-    contract,
-    "CurrentWinningReward"
-  );
+  useEffect(() => {
+    if (!tickets) return;
+    const totalTickets: string[] = tickets;
+    const numofTickets = totalTickets.reduce(
+      (total, ticketAddress) =>
+        ticketAddress === address ? total + 1 : total,
+      0
+    );
 
-  const { data: ticketPrice } = useContractRead(contract, "ticketPrice");
+    setUserTickets(numofTickets);
+  }, [tickets, address]);
 
-  const { data: ticketCommission } = useContractRead(
-    contract,
-    "ticketCommission"
-  );
+  const handleClick = async () => {
+    if (!ticketPrice) return;
+    const expirationTime = new Date(expiration * 1000);
+    const nowTime = new Date();
+    const notification = toast.loading("Buying your tickets...");
 
-  console.log(ticketCommission, "oi");
+    if (expirationTime < nowTime) {
+      toast.error("Ticket Sales are Closed!", {
+        id: notification,
+      });
+      return;
+    }
 
+    if (userTickets === 10) {
+      toast.error("Ticket Limit Reached!", {
+        id: notification,
+      });
+      return;
+    }
+
+    try {
+      const data = await contract.call("BuyTickets", "", {
+        value: ethers.utils.parseEther(
+          (Number(ethers.utils.formatEther(ticketPrice)) * quantity).toString()
+        ),
+      });
+
+      toast.success("Ticket Purchased sucessfully!", {
+        id: notification,
+      }); 
+      console.info("contract call successs", data);
+    } catch (err) {
+      toast.error("Ticket Purchase Failed!", {
+        id: notification,
+      });
+      console.error("contract call failure", err);
+    }
+  };
+  
   if (!address) return <Login />;
   if (isLoading) return <Loading />;
 
@@ -127,23 +171,19 @@ const Home: NextPage = () => {
                   <p>TBC</p>
                 </div>
               </div>
-
+              
               <button
-                disabled={
-                  expiration?.toString() < Date.now().toString() ||
-                  remainingTickets?.toNumber() === 0
-                }
-                className="mt-5 w-full bg-gradient-to-br from-orange-500 to-emerald-600 px-10 py-5 rounded-md text-white shadow-xl disabled:from-gray-600 disabled:text-gray-100 disabled:to-gray-600 disabled:cursor-not-allowed"
+                className="mt-5 w-full bg-gradient-to-br font-semibold from-orange-500 to bg-emerald-600
+              py-5 rounded-md text-white shadow-xl disabled:from-gray-600 disabled:text-gray-100 disabled:to-gray-100
+              "
+                onClick={handleClick}
               >
-                {" "}
-                Buy tickets
+                Buy Tickets
               </button>
+           
             </div>
           </div>
         </div>
-
-        {/* The price per ticket box*/}
-        <div></div>
       </div>
     </div>
   );
