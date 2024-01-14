@@ -19,93 +19,138 @@ import AdminControls from "../components/AdminControls";
 
 
 const Home: NextPage = () => {
+  // Obtém o contrato e um indicador de carregamento usando o hook useContract
   const { contract, isLoading } = useContract("0x4c96dc3F2fDFC011941fF043EbE41bC1493e8086");
+  // Obtém o endereço atual usando o hook useAddress
   const address = useAddress();
-  const [quantity, setQuantity] = useState<number>(1);  
+  // Inicializa um estado de quantidade com o valor padrão de 1
+  const [quantity, setQuantity] = useState<number>(1);
+  // Inicializa um estado de bilhetes do usuário com o valor padrão de 0
   const [userTickets, setUserTickets] = useState(0);
+  // Usa o hook useContractRead para obter os dados dos bilhetes do contrato
   const { data: tickets } = useContractRead(contract, "getTickets");
+  // Usa o hook useContractRead para obter o preço do bilhete do contrato
   const { data: ticketPrice } = useContractRead(contract, "ticketPrice");
+  // Usa o hook useContractRead para obter a data de expiração do contrato
   const { data: expiration } = useContractRead(contract, "expiration");
+  // Usa o hook useContractRead para obter os ganhos do contrato para um determinado endereço
   const { data: winnings } = useContractRead(contract, "getWinningsForAddress", [address]);
+  // Usa o hook useContractWrite para realizar uma mutação assíncrona para retirar os ganhos
   const { mutateAsync: WithdrawWinnings } = useContractWrite(contract, "WithdrawWinnings");
+  // Usa o hook useContractRead para obter o último vencedor do contrato
   const { data: lastWinner } = useContractRead(contract, "lastWinner");
+  // Usa o hook useContractRead para obter o valor do último prêmio do contrato
   const { data: lastWinnerAmount } = useContractRead(contract, "lastWinnerAmount");
-
-
+  // Usa o hook useContractRead para obter o operador da loteria do contrato
   const { data: lotteryOperator } = useContractRead(contract, "lotteryOperator");
-
+  // Usa o hook useContractRead para obter os bilhetes restantes do contrato
   const { data: remainingTickets } = useContractRead(contract, "RemainingTickets");
+  // Usa o hook useContractRead para obter a recompensa atual do contrato
   const { data: currentWinningReward } = useContractRead(contract, "CurrentWinningReward");
+  // Usa o hook useContractRead para obter a comissão do bilhete do contrato
   const { data: ticketCommission } = useContractRead(contract, "ticketCommission");
 
+
   useEffect(() => {
+    // Verifica se os dados dos bilhetes e o endereço estão definidos antes de prosseguir
     if (!tickets) return;
+    // Converte os dados dos bilhetes para o tipo string[]
     const totalTickets: string[] = tickets;
+    // Calcula o número de bilhetes do usuário usando o endereço
     const numofTickets = totalTickets.reduce(
       (total, ticketAddress) =>
        (ticketAddress === address ? total + 1 : total),
       0
     );
+    // Atualiza o estado userTickets com o número de bilhetes do usuário
     setUserTickets(numofTickets);
   }, [tickets, address]);
-
-
+  
   const handleClick = async () => {
+    // Verifica se o preço do bilhete está definido antes de prosseguir
     if (!ticketPrice) return;
+    // Converte a data de expiração em um objeto Date
     const expirationTime = new Date(expiration * 1000);
     const nowTime = new Date();
     const notification = toast.loading("Buying your tickets...");
-
+  
+    // Verifica se o tempo de expiração é anterior ao tempo atual
     if (expirationTime < nowTime) {
+      // Exibe uma mensagem de erro se as vendas de bilhetes estiverem encerradas
       toast.error("Ticket Sales are Closed!", {
         id: notification,
       });
       return;
     }
-
+  
+    // Verifica se o usuário atingiu o limite de 10 bilhetes
     if (userTickets === 10) {
+      // Exibe uma mensagem de erro se o limite de bilhetes for atingido
       toast.error("Ticket Limit Reached!", {
         id: notification,
       });
       return;
     }
-
+  
     try {
-      const data = await contract.call("BuyTickets", "", {
-        value: ethers.utils.parseEther(
-          (Number(ethers.utils.formatEther(ticketPrice)) * quantity).toString()
-        ),
-      });
-
-      toast.success("Ticket Purchased sucessfully!", {
-        id: notification,
-      }); 
-      console.info("contract call successs", data);
+      if (contract) {
+        // Realiza a chamada do contrato para comprar bilhetes
+        const data = await contract.call("BuyTickets", newFunction(), {
+          value: ethers.utils.parseEther(
+            (Number(ethers.utils.formatEther(ticketPrice)) * quantity).toString()
+          ),
+        });
+  
+        // Exibe uma mensagem de sucesso após a compra bem-sucedida
+        toast.success("Ticket Purchased successfully!", {
+          id: notification,
+        });
+        console.info("contract call successs", data);
+  
+        // Atualize o estado userTickets após a compra bem-sucedida
+        setUserTickets(prevUserTickets => prevUserTickets + quantity);
+      } else {
+        // Tratamento caso contract seja indefinido
+        toast.error("Contract is not defined", {
+          id: notification,
+        });
+      }
     } catch (err) {
+      // Exibe uma mensagem de erro em caso de falha na compra de bilhetes
       toast.error("Ticket Purchase Failed!", {
         id: notification,
       });
       console.error("contract call failure", err);
     }
+  
+    function newFunction(): any[] | undefined {
+      return ([]);
+    }
   };
-
+  
   const onWithdrawWinnings = async () => {
+    // Exibe uma notificação de carregamento ao iniciar a retirada dos ganhos
     const notification = toast.loading("Withdrawing winnings ...");
-
+  
     try {
+      // Chama a função para retirar os ganhos do contrato
       const data = await WithdrawWinnings({ args: [] });
-
+  
+      // Exibe uma mensagem de sucesso após a retirada bem-sucedida dos ganhos
       toast.success("Winnings withdrawn successfully!", {
         id: notification,
       });
     } catch (err) {
+      // Exibe uma mensagem de erro em caso de falha na retirada dos ganhos
       toast.error("Whoops Something went wrong!", {
         id: notification,
       });
     }
   };
-
+  
+  // Retorna o componente Login se o endereço não estiver definido
   if (!address) return <Login />;
+  // Retorna o componente Loading se houver carregamento em andamento
   if (isLoading) return <Loading />;
 
   return (

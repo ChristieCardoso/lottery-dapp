@@ -14,7 +14,7 @@ const CountdownTimer = () => {
     process.env.NEXT_PUBLIC_LOTTEY_CONTRACT_ADDRESS
   );
 
-  const { data: expiration, isLoading: isLoadingExpiration } = useContractRead(
+  const { data: expiration } = useContractRead(
     contract,
     "expiration"
   );

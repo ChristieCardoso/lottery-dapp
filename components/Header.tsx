@@ -1,8 +1,5 @@
-/* eslint-disable @next/next/no-img-element */
-
 import React from "react";
 import { NavButton } from "../components/NabButton";
-// import { Bars3BottomRightIcon } from "@heroicons/react/24/solid";
 import { useAddress, useDisconnect } from "@thirdweb-dev/react";
 import BtnWalletConnect from "./BtnWalletConnect";
 
@@ -35,7 +32,6 @@ export const Header = () => {
       </div>
 
       <div className="flex flex-col ml-auto text-right">
-        {/* <Bars3BottomRightIcon className="h-8 w-8 mx-auto text-white cursor-pointer" /> */}
         <BtnWalletConnect />
         <span className="md:hidden">
           <NavButton onClick={disconnect} title="Logout" />

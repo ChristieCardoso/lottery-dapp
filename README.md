@@ -1,40 +1,50 @@
-## Getting Started
+# Lottery DApp
 
-Create a project using this example:
+This is a decentralized application (DApp) for a smart contract-based lottery on the mumbai blockchain. The app was developed using Next.js and React, with integration with Ethereum smart contracts through the ethers.js library.
 
-```bash
-npx thirdweb create --template next-typescript-starter
-```
+## Key Features
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+### Home Page
 
-On `pages/_app.tsx`, you'll find our `ThirdwebProvider` wrapping your app, this is necessary for our [hooks](https://portal.thirdweb.com/react) and
-[UI Components](https://portal.thirdweb.com/ui-components) to work.
+The Home page is responsible for displaying information about the lottery, allowing users to purchase tickets, withdraw winnings, and perform other lottery-related operations.
 
-## Environment Variables
+### Ticket Purchase
 
-To run this project, you will need to add environment variables. Check the `.env.example` file for all the environment variables required and add it to `.env.local` file or set them up on your hosting provider.
+Users can purchase tickets to participate in the lottery. The ticket price is obtained from the smart contract and the user can purchase 10 tickets at a time.
 
-## Deploy to IPFS
+### Winner Drawing
 
-Deploy a copy of your application to IPFS using the following command:
+The smart contract allows the winners to be drawn at random. The contract administrator can trigger the draw through the application dashboard.
 
-```bash
-yarn deploy
-```
+### Withdrawal of Winnings and Commissions
 
-## Learn More
+Users can withdraw their lottery winnings, and the operator's commission can also be withdrawn through the app.
 
-To learn more about thirdweb and Next.js, take a look at the following resources:
+## Technologies Used
 
-- [thirdweb React Documentation](https://docs.thirdweb.com/react) - learn about our React SDK.
-- [thirdweb TypeScript Documentation](https://docs.thirdweb.com/typescript) - learn about our JavaScript/TypeScript SDK.
-- [thirdweb Portal](https://docs.thirdweb.com) - check our guides and development resources.
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Templates](https://thirdweb.com/templates)
+- Next.js
+- React
+- Thirdweb
+- ethers.js
+- Solidity (for smart contracts)
 
-You can check out [the thirdweb GitHub organization](https://github.com/thirdweb-dev) - your feedback and contributions are welcome!
+## How to Run the Project Locally
 
-## Join our Discord!
+1. Clone the repository:
 
-For any questions, suggestions, join our discord at [https://discord.gg/thirdweb](https://discord.gg/thirdweb).
+git clone https://github.com/ChristieCardoso/lottery-dapp.git
+
+2. Install dependencies:
+
+cd lottery-dapp
+npm install
+
+3. Start the development server:
+
+npm run dev
+
+## Contributing
+Contributions are welcome! Feel free to open an issue or submit a pull request.
+
+## License
+This project is licensed under the MIT License - see the LICENSE file for details.

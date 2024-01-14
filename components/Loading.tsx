@@ -1,5 +1,4 @@
-/* eslint-disable @next/next/no-img-element */
-
+import React from "react";
 import PropagateLoader from "react-spinners/PropagateLoader"
 
 const Loading = () => {
