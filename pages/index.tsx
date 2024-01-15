@@ -20,7 +20,7 @@ import AdminControls from "../components/AdminControls";
 
 const Home: NextPage = () => {
   // Obtém o contrato e um indicador de carregamento usando o hook useContract
-  const { contract, isLoading } = useContract("0x4c96dc3F2fDFC011941fF043EbE41bC1493e8086");
+  const { contract, isLoading } = useContract(process.env.NEXT_PUBLIC_LOTTERY_CONTRACT_ADDRESS);
   // Obtém o endereço atual usando o hook useAddress
   const address = useAddress();
   // Inicializa um estado de quantidade com o valor padrão de 1
