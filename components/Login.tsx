@@ -10,7 +10,7 @@ function Login() {
           src="https://res.cloudinary.com/dmvm1mlgv/image/upload/f_auto,q_auto/yhfzhawy4hlzaqjhy5lk"
           alt=""
         />
-        <h1 className="text-6xl text-white font-bold">BlockFolio</h1>
+        <h1 className="text-6xl text-white font-bold">Lottery</h1>
         <h3 className="text-white">
           Get Started By Logging in with your MetaMask
         </h3>

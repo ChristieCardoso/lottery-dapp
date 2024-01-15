@@ -11,7 +11,7 @@ function AdminControls() {
   // Obtém o total da comissão do operador usando o hook useContractRead
   const { data: totalCommission } = useContractRead(contract, "operatorTotalCommission");
   // Obtém a função de mutação para sortear um bilhete vencedor usando o hook useContractWrite
-  const { mutateAsync: DrawWinnerTicket} = useContractWrite(contract, "DrawWinnerTicket");
+  const { mutateAsync: DrawWinnerTicket } = useContractWrite(contract, "DrawWinnerTicket");
   // Obtém a função de mutação para reembolsar todos os bilhetes usando o hook useContractWrite
   const { mutateAsync: RefundAll } = useContractWrite(contract, "RefundAll");
   // Obtém a função de mutação para reiniciar o sorteio usando o hook useContractWrite

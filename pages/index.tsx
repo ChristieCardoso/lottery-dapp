@@ -117,7 +117,7 @@ const Home: NextPage = () => {
       }
     } catch (err) {
       // Exibe uma mensagem de erro em caso de falha na compra de bilhetes
-      toast.error("Ticket Purchase Failed!", {
+      toast.error("Insufficient funds!", {
         id: notification,
       });
       console.error("contract call failure", err);
