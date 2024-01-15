@@ -7,7 +7,7 @@ import { currency } from "../libs/constants";
 
 function AdminControls() {
   // Obtém o contrato usando o hook useContract
-  const { contract } = useContract(process.env.NEXT_PUBLIC_LOTTERY_CONTRACT_ADDRESS);
+  const { contract } = useContract("0x4c96dc3F2fDFC011941fF043EbE41bC1493e8086");
   // Obtém o total da comissão do operador usando o hook useContractRead
   const { data: totalCommission } = useContractRead(contract, "operatorTotalCommission");
   // Obtém a função de mutação para sortear um bilhete vencedor usando o hook useContractWrite

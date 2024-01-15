@@ -12,7 +12,6 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ThirdwebProvider
       activeChain={activeChain}
-      clientId="eb07fa0b262c78817642cf5c3989ba18"
     >
       <Component {...pageProps} />
       <Toaster />
