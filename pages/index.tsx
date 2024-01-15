@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 import Marquee from "react-fast-marquee";
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
-import { currency } from "../constants";
+import { currency } from "../libs/constants";
 import { Header } from "../components/Header";
 import Login from "../components/Login";
 import Loading from "../components/Loading";

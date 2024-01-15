@@ -3,7 +3,7 @@ import React from 'react'
 import { useContractRead , useContract ,useContractWrite} from "@thirdweb-dev/react";
 import { ethers } from 'ethers';
 import toast from "react-hot-toast";
-import { currency } from '../constants';
+import { currency } from "../libs/constants";
 
 function AdminControls() {
   // Obtém o contrato usando o hook useContract
