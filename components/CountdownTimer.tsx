@@ -2,7 +2,6 @@ import React from "react";
 import { useContract, useContractRead } from "@thirdweb-dev/react";
 import Countdown from "react-countdown";
 
-
 type Props = {
   hours: number;
   minutes: number;
